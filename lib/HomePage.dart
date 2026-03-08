@@ -526,8 +526,6 @@
 //     );
 //   }
 // }
-
-//lets test this new comment
 import 'package:flutter/material.dart';
 import 'profile.dart';
 
@@ -543,17 +541,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<bool> monthlyFires = List.generate(4, (_) => false);
   int currentMonth = DateTime.now().month;
-  int todaySaturdayIndex = -1;
+  int todayMondayIndex = -1;
   bool popupShown = false;
 
   @override
   void initState() {
     super.initState();
-    calculateSaturdayIndex();
+    calculateMondayIndex();
     checkForPopup();
   }
 
-  void calculateSaturdayIndex() {
+  void calculateMondayIndex() {
     DateTime now = DateTime.now();
     DateTime firstDay = DateTime(now.year, now.month, 1);
 
@@ -562,9 +560,9 @@ class _HomePageState extends State<HomePage> {
     for (int i = 0; i < now.day; i++) {
       DateTime day = firstDay.add(Duration(days: i));
 
-      if (day.weekday == DateTime.saturday) {
+      if (day.weekday == DateTime.monday) {
         if (day.day == now.day) {
-          todaySaturdayIndex = count;
+          todayMondayIndex = count;
         }
         count++;
       }
@@ -572,14 +570,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   void checkForPopup() {
-    if (DateTime.now().weekday == DateTime.saturday &&
-        todaySaturdayIndex != -1 &&
-        !monthlyFires[todaySaturdayIndex] &&
+    if (DateTime.now().weekday == DateTime.monday &&
+        todayMondayIndex != -1 &&
+        !monthlyFires[todayMondayIndex] &&
         !popupShown) {
       popupShown = true;
 
       Future.delayed(Duration.zero, () {
-        showFirePopup(todaySaturdayIndex);
+        showFirePopup(todayMondayIndex);
       });
     }
   }
@@ -608,10 +606,8 @@ class _HomePageState extends State<HomePage> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          // title: const Text("Saturday Activity 🔥"),
           content: const Text("Did you participate?"),
           actions: [
-            /// SKIP BUTTON
             TextButton.icon(
               icon: const Icon(Icons.close, color: Colors.red),
               label: const Text("Skip", style: TextStyle(color: Colors.red)),
@@ -619,8 +615,6 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pop(context);
               },
             ),
-
-            /// YES BUTTON
             ElevatedButton.icon(
               icon: const Icon(Icons.check),
               label: const Text("Yes (+2)"),
@@ -676,7 +670,6 @@ class _HomePageState extends State<HomePage> {
                           );
                         },
                       ),
-
                       const Row(
                         children: [
                           Icon(
@@ -722,7 +715,7 @@ class _HomePageState extends State<HomePage> {
                     children: List.generate(
                       4,
                       (index) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Icon(
                           Icons.local_fire_department,
                           color: monthlyFires[index]
